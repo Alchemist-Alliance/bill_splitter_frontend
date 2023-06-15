@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght@900&display=swap');
+
+nav{
+    display: flex;
+}
+
+.main_text{
+    flex: 9;
+    font-family: 'Recursive', sans-serif;
+    font-size: xx-large;
+    padding-left: 5rem;
+}
+
+.main_text > p{
+    color: #5C728A;
+}
+
+.user_icons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding-right: 5rem;
+}
+
+.bell_icon_container{
+    background-color: white;
+    border-radius: 10%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+.bell_icon{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+img{
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.profile_photo{
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    margin-left: 0.5rem;
+}

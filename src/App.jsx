@@ -1,7 +1,10 @@
+import './App.css'
+import HeaderBar from './HeaderBar';
+
 function App() {
 
   return (
-    <p>Let's Start Fresh</p>
+    <HeaderBar />
   )
 }
 
