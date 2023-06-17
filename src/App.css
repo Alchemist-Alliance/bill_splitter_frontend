@@ -1,3 +1,29 @@
 body{
     background-color: #F5F5F5;
+    padding: 1% 2%;
+}
+
+.wrapper{
+    display: flex;
+}
+
+.wrapper > div{
+    flex: 1;
+    margin: 1rem;
+    background-color: aqua;
+}
+
+.wrapper > div:first-child{
+    display: flex;
+    flex-direction: column;
+}
+
+.current_trip{
+    background-color: yellow;
+    flex: 3;
+}
+
+.recent_expense{
+    background-color: orange;
+    flex: 1;
 }
