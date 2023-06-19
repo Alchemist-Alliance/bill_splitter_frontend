@@ -8,7 +8,8 @@ function App() {
       <div className="wrapper">
         <div>
           <div className="current_trip">
-            <p>Lorem ipsum dolor sit amet consectetur.</p>
+            <p>#11 Trip to Kashmir</p>
+            <p>Splitting with</p>
           </div>
           <div className="recent_expense">
             <p>Lorem ipsum dolor sit amet consectetur.</p>
