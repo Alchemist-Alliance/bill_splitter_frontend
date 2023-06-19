@@ -1,3 +1,5 @@
-import Header from "./Header";
+import Header from "./header";
+import Avatar from "@/components/common/avatar";
+import MiddleColumn from "@/components/home/middleColumn";
 
-export { Header };
+export {Header, Avatar, MiddleColumn};
