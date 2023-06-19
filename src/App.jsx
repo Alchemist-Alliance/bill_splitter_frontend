@@ -1,11 +1,10 @@
-import './App.css'
-import HeaderBar from './HeaderBar';
+import "./App.css";
+import { Header } from "./components";
 
 function App() {
-
   return (
     <>
-      <HeaderBar />
+      <Header />
       <div className="wrapper">
         <div>
           <div className="current_trip">
@@ -24,8 +23,7 @@ function App() {
         </div>
       </div>
     </>
-    
-  )
+  );
 }
 
-export default App
+export default App;
