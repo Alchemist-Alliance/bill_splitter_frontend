@@ -1,5 +1,5 @@
 import { Header } from '@/components'
-import {Recursive} from 'next/font/google'
+import { Recursive } from 'next/font/google'
 import './globals.css'
 
 const recursive = Recursive({ weight: ['400', '600', '700', '800', '900'], subsets: ['latin'] })
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`flex flex-col min-w-screen h-screen bg-slate-100 ${recursive.className}`} suppressHydrationWarning={true}>
+      <body className={`flex flex-col min-w-screen h-screen bg-primary ${recursive.className}`} suppressHydrationWarning={true}>
         <Header />
         {children}
       </body>
