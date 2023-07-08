@@ -8,7 +8,7 @@ const LastColumn = () => {
             <p className="text-2xl font-bold mb-5">Paid Till Now</p>
             <div className='mb-7'>
                 {currentExpense.map((user, index) => (
-                    <ProgressBar key={index} name={user.name} money={user.money} width={`${(user.money / 2000) * 100}%`} />
+                    <ProgressBar key={index} name={user.name} money={user.money} total={2000} />
                 ))}
             </div>
             <CustomButton classname='bg-secondary text-stroke' title='Full Summary' />

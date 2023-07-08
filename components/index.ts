@@ -13,7 +13,6 @@ import OfflineLastColumn from "./offlineSplit/OfflineLastColumn";
 import Dashboard from "./offlineSplit/Dashboard";
 import Dropdown from "./offlineSplit/Dropdown";
 import OfflineBottomColumn from "./offlineSplit/OfflineBottomColumn";
-import Split from "./offlineSplit/Split";
 import OfflineHeader from "./offlineSplit/OfflineHeader";
 
 export {
@@ -33,6 +32,5 @@ export {
   NamedAvatar,
   Dropdown,
   OfflineBottomColumn,
-  Split,
   OfflineHeader,
 };
