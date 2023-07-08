@@ -1,8 +1,9 @@
-import { Header } from '@/components'
-import { Recursive } from 'next/font/google'
-import './globals.css'
 
-const recursive = Recursive({ weight: ['400', '600', '700', '800', '900'], subsets: ['latin'] })
+import { Poppins } from 'next/font/google'
+import './globals.css'
+import { OfflineHeader } from '@/components'
+
+const poppins = Poppins({ weight: ['600', '700', '900'], subsets: ['latin'] })
 
 export const metadata = {
   title: 'Bill Splitter',
@@ -16,8 +17,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`flex flex-col min-w-screen h-screen bg-primary ${recursive.className}`} suppressHydrationWarning={true}>
-        <Header />
+      <body className={`flex flex-col min-w-screen h-screen bg-background ${poppins.className}`} suppressHydrationWarning={true}>
+        <OfflineHeader />
         {children}
       </body>
     </html>

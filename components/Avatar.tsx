@@ -1,3 +1,4 @@
+import { firstWordPicker, randomColorPicker } from "@/utils";
 import Image from "next/image";
 import React from "react";
 
@@ -15,5 +16,20 @@ export default function Avatar({ width, height, src, className }: {
             src={src}
             alt="daddy"
         />
+    )
+}
+
+export function NamedAvatar({ name, className }: {
+    name: string,
+    className?: string
+}) {
+
+    const [backgroundColor, textColor] = randomColorPicker()
+    return (
+        <div className={`flex items-center justify-center rounded-full border-4 ${className}`} style={{ backgroundColor: backgroundColor, borderColor: textColor }}>
+            <p className="font-bold text-xl" style={{ color: textColor }}>
+                {firstWordPicker(name)}
+            </p>
+        </div>
     )
 }

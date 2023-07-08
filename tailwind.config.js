@@ -8,18 +8,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        secondary: "#5C728A",
-        primary: "#EDF1F5",
-        stroke: "#ADBED2",
-        coffee: "#E0D59E",
-        brown: "#4D4023",
-        yellow: "#EBB62D",
-        red: "#8A2C0F",
-        whitish: "#FEF4C3",
-        peach: "#EF5D5D",
-        "peach-complementary": "#FFF5F8",
-        "dark-pink": "#E34F85",
-        "light-pink": "#FFE0EC",
+        background: "#ECFBF3",
+        secondary: "#6DD58C",
+        primary: "#C4E9CE",
+        stroke: "#073042",
+        "stroke-gradient": "#1f6345",
+        "snackbar-error-bg": "#FED0D0",
+        "snackbar-success-bg": "#F0F9EB",
+        "snackbar-error-text": "#F56C6C",
+        "snackbar-success-text": "#67C23A",
+        // "snackbar-error-bg": "#ff5555",
+        // "snackbar-error-text": "#ffbcbc",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -28,7 +27,33 @@ module.exports = {
       },
       boxShadow: {
         custom:
-          "0 14px 30px rgba(103, 132, 187, .15), 0 4px 4px rgba(103, 132, 187, .05)",
+          "0 14px 30px rgba(103, 187, 152, .15), 0 4px 4px rgba(103, 187, 152, .05)",
+      },
+      animation: {
+        "custom-fade": "fadeIn 0.5s, fadeOut 0.5s ease-in-out 2.5s",
+        "custom-progress": "progress 0.4s ease-in-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          from: {
+            top: 0,
+            opacity: 0,
+          },
+          to: {
+            top: "10%",
+            opacity: 1,
+          },
+        },
+        fadeOut: {
+          from: {
+            top: "10%",
+            opacity: 1,
+          },
+          to: {
+            top: 0,
+            opacity: 0,
+          },
+        },
       },
     },
   },
