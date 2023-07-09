@@ -58,7 +58,7 @@ const OfflineFirstColumn = ({ data, dispatch }: { data: appState, dispatch: Disp
                 <p className="text-lg font-bold pb-4">Your total bill till now</p>
                 <p className="text-3xl font-bold"><span className='text-lg font-bold pr-2'>₹</span><span ref={nodeRef}>{data.totalBill}</span></p>
             </div>
-            <motion.button whileTap={{ scale: 0.9 }} onClick={split} className="text-xl font-bold bg-secondary text-stroke rounded-lg py-3">
+            <motion.button whileTap={{ scale: 0.9 }} onClick={split} className="text-xl font-bold bg-secondary text-stroke rounded-lg py-3 mt-4">
                 Split
             </motion.button>
         </div>

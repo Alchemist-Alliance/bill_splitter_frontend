@@ -8,7 +8,7 @@ export default function MiddleColumn() {
         <div className="flex flex-col gap-y-8">
             <div className="bg-primary p-7 text-stroke text-md flex flex-col gap-y-4 rounded-2xl shadow-custom">
                 <p className="text-2xl font-bold">Enter Item</p>
-                {items.map(item => (<Item {...item} />))}
+                {items.map((item, index) => (<Item key={index} {...item} />))}
                 <button className="text-2xl font-bold bg-secondary text-stroke rounded-xl py-3">
                     Add Item
                 </button>
