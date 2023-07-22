@@ -5,6 +5,24 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  daisyui: {
+    base: false,
+    themes: [
+      {
+        mytheme: {
+          secondary: "#6DD58C",
+          primary: "#C4E9CE",
+          accent: "#073042",
+          neutral: "#073042",
+          "base-100": "#ECFBF3",
+          info: "#53c0f3",
+          success: "#71ead2",
+          warning: "#f3cc30",
+          error: "#FA7A7A",
+        },
+      },
+    ],
+  },
   theme: {
     extend: {
       colors: {
@@ -12,18 +30,14 @@ module.exports = {
         secondary: "#6DD58C",
         primary: "#C4E9CE",
         stroke: "#073042",
-        "stroke-gradient": "#1f6345",
+        red: "#FA7A7A",
+        "stroke-gradient": "#126b45",
         "snackbar-error-bg": "#FED0D0",
         "snackbar-success-bg": "#F0F9EB",
         "snackbar-error-text": "#F56C6C",
         "snackbar-success-text": "#67C23A",
         // "snackbar-error-bg": "#ff5555",
         // "snackbar-error-text": "#ffbcbc",
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       boxShadow: {
         custom:
@@ -57,5 +71,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };

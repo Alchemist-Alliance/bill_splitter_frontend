@@ -1,11 +1,11 @@
 import Header from "./Header";
 import Avatar, { NamedAvatar } from "./Avatar";
+import CreateEventForm from "./offlineSplit/CreateEvent";
 import MiddleColumn from "./MiddleColumn";
 import FirstColumn from "./FirstColumn";
 import CustomButton from "./CustomButton";
 import LastColumn from "./LastColumn";
 import ProgressBar from "./ProgressBar";
-import CreateTripForm from "./offlineSplit/CreateTripForm";
 import SnackBar from "./offlineSplit/SnackBar";
 import OfflineFirstColumn from "./offlineSplit/OfflineFirstColumn";
 import OfflineMiddleColumn from "./offlineSplit/OfflineMiddleColumn";
@@ -14,6 +14,8 @@ import Dashboard from "./offlineSplit/Dashboard";
 import Dropdown from "./offlineSplit/Dropdown";
 import OfflineBottomColumn from "./offlineSplit/OfflineBottomColumn";
 import OfflineHeader from "./offlineSplit/OfflineHeader";
+import Loader from "./Loader";
+import Logo from "./Logo";
 
 export {
   Header,
@@ -23,7 +25,6 @@ export {
   CustomButton,
   LastColumn,
   ProgressBar,
-  CreateTripForm,
   SnackBar,
   OfflineFirstColumn,
   OfflineMiddleColumn,
@@ -33,4 +34,7 @@ export {
   Dropdown,
   OfflineBottomColumn,
   OfflineHeader,
+  Loader,
+  Logo,
+  CreateEventForm,
 };

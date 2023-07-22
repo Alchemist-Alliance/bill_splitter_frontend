@@ -1,55 +1,37 @@
-"use client"
+"use client";
 
-import { useEffect, useReducer, useRef } from 'react'
-import OfflineFirstColumn from './OfflineFirstColumn'
-import OfflineMiddleColumn from './OfflineMiddleColumn'
-import OfflineLastColumn from './OfflineLastColumn'
-import { useRouter } from 'next/navigation'
-import { reducer } from '@/utils'
-import OfflineBottomColumn from './OfflineBottomColumn'
-import SnackBar from './SnackBar'
+import { useRef } from "react";
+import OfflineFirstColumn from "./OfflineFirstColumn";
+import OfflineMiddleColumn from "./OfflineMiddleColumn";
+import OfflineLastColumn from "./OfflineLastColumn";
+import OfflineBottomColumn from "./OfflineBottomColumn";
+import SnackBar from "./SnackBar";
+import AppProvider from "../AppProvider";
+import { totalBillPaid } from "@/utils";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const Dashboard = ({ tripId }: { tripId: string }) => {
-    const router = useRouter()
-
-    const initialState = {
-        memberNames: [],
-        memberExpenses: {},
-        tripName: '',
-        creationDate: 0,
-        loading: true,
-        selectedUser: '',
-        totalBill: 0
-    }
-
-    const [state, dispatch] = useReducer(reducer, initialState)
-    const snackbarRef = useRef<any>(null);
-
-    useEffect(() => {
-        const trip = localStorage.getItem('trip')
-        if (!trip) {
-            router.push('/new')
-        }
-        else {
-            const tripData = JSON.parse(trip)[tripId]
-            if (!tripData) {
-                router.push('/new')
-            }
-            localStorage.currentTripId = tripId
-            dispatch({ type: 'setInitData', payload: { data: tripData, loading: false } })
-        }
-    }, [])
-
-    return (state.loading ?
-        <div className='flex items-center justify-center'>Loading...</div> :
-        <div className="grid grid-cols-1 gap-5 px-5 pb-5 md:grid-cols-2 md:px-8 md:pb-5 lg:grid-cols-3 lg:px-8 lg:pb-5">
-            <SnackBar ref={snackbarRef} />
-            <OfflineFirstColumn data={state} dispatch={dispatch} />
-            <OfflineMiddleColumn state={state} dispatch={dispatch} snackbar={snackbarRef} />
-            <OfflineLastColumn data={state} dispatch={dispatch} />
-            <OfflineBottomColumn state={state} dispatch={dispatch} snackbar={snackbarRef} />
+const Dashboard = ({ eventData }: any) => {
+  const initialState = {
+    totalBill: totalBillPaid(eventData.bills),
+    ...eventData,
+  };
+  const queryClient = new QueryClient();
+  const snackbarRef = useRef<any>(null);
+  return (
+    <AppProvider event={initialState}>
+      <QueryClientProvider client={queryClient}>
+        <div className="grid grid-cols-1 gap-3 px-3 pb-3 md:grid-cols-2 md:gap-5 md:px-8 md:pb-5 lg:grid-cols-3 lg:px-8 lg:pb-5">
+          <SnackBar ref={snackbarRef} />
+          <OfflineFirstColumn />
+          <OfflineMiddleColumn snackbar={snackbarRef} />
+          <OfflineLastColumn />
+          <OfflineBottomColumn snackbar={snackbarRef} />
         </div>
-    )
-}
+        {/* <ReactQueryDevtools /> */}
+      </QueryClientProvider>
+    </AppProvider>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

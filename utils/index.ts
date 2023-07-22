@@ -1,8 +1,18 @@
 "use client";
 
 import { colors } from "@/data";
-import { ReducerAction, appState } from "@/types";
-import { Reducer } from "react";
+import useAppContext from "@/hooks";
+import { AppStore, createAppStore, AppContext } from "@/store";
+import {
+  AppProviderProps,
+  ReducerAction,
+  Users,
+  draweeType,
+  event,
+  payeeType,
+  snackBarIconType,
+} from "@/types";
+import { MutableRefObject, Reducer, useRef } from "react";
 
 export const randomColorPicker = () => {
   const color = colors[Math.floor(Math.random() * colors.length)];
@@ -33,130 +43,132 @@ export const firstWordPicker = (name: string) => {
     : firstName.slice(0, 1).toUpperCase();
 };
 
-export const userBillPaid = (
-  totalUserItems: { item: string; amount: string }[]
-): number => {
+export const userBillPaid = (totalUserBills: {
+  [key: string]: number;
+}): number => {
   let total = 0;
-  if (totalUserItems) {
-    for (let i of totalUserItems) {
-      total += Number(i.amount);
+  for (let i of Object.keys(totalUserBills)) {
+    total += totalUserBills[i];
+  }
+  return total;
+};
+
+export const userItems = (
+  totalBills: {
+    [key: string]: { amount: number; name: string; shared_amount: number };
+  },
+  userBills: { [key: string]: number }
+): { item: string; amount: number }[] => {
+  const items = [];
+  for (let i of Object.keys(userBills)) {
+    if (userBills[i] !== 0) {
+      items.push({ item: totalBills[i]["name"], amount: userBills[i] });
     }
-    return total;
-  } else {
-    return 0;
   }
+  return items;
 };
 
-const updateLocalStorage = (state: appState) => {
-  const trip = localStorage.getItem("trip");
-  const tripId = localStorage.getItem("currentTripId");
-  if (!trip) {
-    const newTrip = {
-      [tripId as string]: state,
-    };
-    localStorage.trip = JSON.stringify(newTrip);
-  } else {
-    const tripDetail = JSON.parse(trip);
-    tripDetail[tripId as string] = state;
-    localStorage.trip = JSON.stringify(tripDetail);
-  }
+export const showSnackBar = (
+  snackbar: MutableRefObject<any>,
+  message: string,
+  type: "success" | "error"
+) => {
+  const tailwindClasses = {
+    success: "bg-stroke text-secondary border-l-4 border-secondary",
+    error:
+      "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text",
+  };
+
+  const snackBarIcons = {
+    success: snackBarIconType.FaCheckCircle,
+    error: snackBarIconType.FaTimesCircle,
+  };
+
+  return snackbar?.current?.show(
+    message,
+    snackBarIcons[type],
+    tailwindClasses[type]
+  );
 };
 
-export const reducer: Reducer<appState, ReducerAction> = (state, action) => {
-  switch (action.type) {
-    case "setInitData":
-      updateLocalStorage({
-        ...state,
-        ...action.payload.data,
-        loading: action.payload.loading,
-      });
-
-      return {
-        ...state,
-        ...action.payload.data,
-        loading: action.payload.loading,
-      };
-
-    case "setSelectedUser":
-      updateLocalStorage({
-        ...state,
-        selectedUser: action.payload,
-      });
-      return {
-        ...state,
-        selectedUser: action.payload,
-      };
-
-    case "addItems":
-      const prevMemberExpense =
-        state["memberExpenses"][state.selectedUser] || [];
-
-      updateLocalStorage({
-        ...state,
-        memberExpenses: {
-          ...state.memberExpenses,
-          [state.selectedUser]: [...prevMemberExpense, ...action.payload],
-        },
-        totalBill: action.payload2,
-      });
-      return {
-        ...state,
-        memberExpenses: {
-          ...state.memberExpenses,
-          [state.selectedUser]: [...prevMemberExpense, ...action.payload],
-        },
-        totalBill: action.payload2,
-      };
-
-    case "removeItems":
-      const removedExpense = state["memberExpenses"][
-        action.payload.user
-      ].splice(action.payload.index, 1);
-
-      const newBill = state.totalBill - Number(removedExpense[0]["amount"]);
-
-      updateLocalStorage({
-        ...state,
-        totalBill: newBill,
-      });
-      return {
-        ...state,
-        totalBill: newBill,
-      };
-
-    case "addMembers":
-      updateLocalStorage({
-        ...state,
-        memberNames: [...state.memberNames, ...action.payload],
-      });
-      return {
-        ...state,
-        memberNames: [...state.memberNames, ...action.payload],
-      };
-
-    case "removeMembers":
-      let newAmount = state.totalBill;
-      if (state["memberExpenses"][action.payload2]) {
-        newAmount -= userBillPaid(state["memberExpenses"][action.payload2]);
-        delete state["memberExpenses"][action.payload2];
-      }
-
-      updateLocalStorage({
-        ...state,
-        memberNames: [...action.payload],
-        totalBill: newAmount,
-        selectedUser:
-          state.selectedUser === action.payload2 ? "" : state.selectedUser,
-      });
-      return {
-        ...state,
-        memberNames: [...action.payload],
-        totalBill: newAmount,
-        selectedUser:
-          state.selectedUser === action.payload2 ? "" : state.selectedUser,
-      };
-
-    default:
-      return state;
+export const initialDraweeState = (users: Users[]) => {
+  const draweeState: { [key: number]: string } = {};
+  for (let i = 0; i < users.length; i++) {
+    draweeState[i] = users[i].name;
   }
+  return draweeState;
+};
+
+export function titleCase(str: string) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(function (word: string) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+
+export const totalBillPaid = (totalBills: {
+  [key: string]: { amount: number; name: string; shared_amount: number };
+}) => {
+  let total: number = 0;
+  for (let i of Object.keys(totalBills)) {
+    total += totalBills[i].amount;
+  }
+  return total;
+};
+
+export const sendBillToBackend = async (billObj: {
+  event_key: string;
+  name: string;
+  amount: number;
+  drawees: number[];
+  payees: { [key: string]: number };
+  notes: string;
+}) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/create_bill`,
+    {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(billObj),
+    }
+  );
+  return response.json();
+};
+
+export const sendUserToBackend = async (userObj: {
+  eventKey: string;
+  userName: string[];
+}) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/add_new_user`,
+    {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(userObj),
+    }
+  );
+  return response.json();
+};
+
+export const formatDrawees = (drawees: draweeType) => {
+  const formattedDrawees: number[] = [];
+  for (let i of Object.keys(drawees)) {
+    formattedDrawees.push(Number(i));
+  }
+  return formattedDrawees;
+};
+
+export const formatPayees = (payees: payeeType) => {
+  const formattedPayees: { [key: string]: number } = {};
+  for (let i of Object.keys(payees)) {
+    formattedPayees[i] = Number(payees[i]);
+  }
+  return formattedPayees;
 };

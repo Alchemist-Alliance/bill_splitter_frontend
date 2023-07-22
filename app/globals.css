@@ -39,3 +39,29 @@ input:-webkit-autofill:active {
     scrollbar-width: none; /* Firefox */
   }
 }
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Handle */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #6dd58c;
+    border-radius: 3px;
+  }
+
+  /* Handle on hover */
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c4e9ce;
+  }
+
+  .custom-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: 5px;
+  }
+}

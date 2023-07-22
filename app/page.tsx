@@ -1,4 +1,4 @@
-import { FirstColumn, Header, LastColumn, MiddleColumn } from "@/components";
+import { FirstColumn, LastColumn, MiddleColumn } from "@/components";
 
 export default function Home() {
 	return (

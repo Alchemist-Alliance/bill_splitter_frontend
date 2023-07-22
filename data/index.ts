@@ -1,3 +1,4 @@
+import { Variants } from "framer-motion";
 import { BiRupee, BiShoppingBag } from "react-icons/bi";
 
 export const items = [
@@ -49,3 +50,38 @@ export const colors = [
   { background: { r: 242, g: 135, b: 13 }, text: { r: 94, g: 43, b: 12 } },
   { background: { r: 243, g: 84, b: 40 }, text: { r: 255, g: 232, b: 224 } },
 ];
+
+export const listVariants: Variants = {
+  open: {
+    clipPath: "inset(0% 0% 0% 0% round 10px)",
+    transition: {
+      type: "spring",
+      bounce: 0,
+      duration: 0.7,
+      delayChildren: 0.3,
+      staggerChildren: 0.05,
+      staggerDirection: 1,
+    },
+  },
+  closed: {
+    clipPath: "inset(10% 50% 90% 50% round 10px)",
+    transition: {
+      type: "spring",
+      bounce: 0,
+      duration: 0.3,
+    },
+  },
+};
+
+export const itemVariants: Variants = {
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 24,
+    },
+  },
+  closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
+};

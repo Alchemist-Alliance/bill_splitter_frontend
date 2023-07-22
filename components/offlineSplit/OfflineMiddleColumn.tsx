@@ -1,65 +1,225 @@
-"use client"
+"use client";
 
-import { Dropdown } from "@/components";
-import { FaRupeeSign, FaShoppingBag } from "react-icons/fa";
-import { ReducerAction, appState, snackBarIconType } from "@/types";
-import { Dispatch, MutableRefObject, useState } from "react";
-import { motion } from "framer-motion";
+import { Dropdown, Loader } from "@/components";
+import { FaPlus, FaRupeeSign, FaShoppingBag } from "react-icons/fa";
+import { payeeType } from "@/types";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { AnimatePresence, animate, motion } from "framer-motion";
+import DropdownSelector from "./DropdownSelector";
+import {
+  formatDrawees,
+  formatPayees,
+  sendBillToBackend,
+  showSnackBar,
+} from "@/utils";
+import { useDrawee, useBillInput, usePayee } from "@/store";
+import { shallow } from "zustand/shallow";
+import useAppContext from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
 
-export default function OfflineMiddleColumn({ state, dispatch, snackbar }: { state: appState, dispatch: Dispatch<ReducerAction>, snackbar: MutableRefObject<any> }) {
-
-    const [item, setItem] = useState<string>('')
-    const [amount, setAmount] = useState<string>('')
-
-    const addItems = () => {
-
-        if (state.selectedUser == '') {
-            return snackbar?.current?.show("User Not Selected", snackBarIconType.FaTimesCircle, "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text")
+export default function OfflineMiddleColumn({
+  snackbar,
+}: {
+  snackbar: MutableRefObject<any>;
+}) {
+  const nodeRef = useRef<HTMLSpanElement | null>(null);
+  const users = useAppContext((event) => event.users);
+  const addBillToStore = useAppContext((event) => event.addBill);
+  const eventKey = useAppContext((event) => event.key);
+  const [drawees, resetDrawees] = useDrawee(
+    (draweeState) => [draweeState.drawees, draweeState.resetDrawees],
+    shallow
+  );
+  const [billName, updateBillName] = useBillInput(
+    (input) => [input.billName, input.updateBillName],
+    shallow
+  );
+  const [itemBill, setItemBill] = useState<number>(0);
+  const [
+    payees,
+    selectedPayee,
+    setPayeeContribution,
+    resetPayeeContribution,
+    resetPayees,
+  ] = usePayee(
+    (payeeState) => [
+      payeeState.payees,
+      payeeState.selectedPayee,
+      payeeState.setPayeeContribution,
+      payeeState.resetPayeeContribution,
+      payeeState.resetPayees,
+    ],
+    shallow
+  );
+  const previousItemBill = useRef<number>(itemBill);
+  const previousPayeeState = useRef<payeeType>({});
+  const { isLoading, mutate } = useMutation({
+    mutationFn: sendBillToBackend,
+    onSuccess: (billObj: any) => {
+      for (let i of Object.keys(drawees)) {
+        users[Number(i)].bills[billObj.bill.key] = 0;
+      }
+      for (let i of Object.keys(payees)) {
+        if (payees[i] !== "") {
+          users[Number(i)].bills[billObj.bill.key] = Number(payees[i]);
         }
-        if (item == '') {
-            return snackbar?.current?.show("Item is Empty", snackBarIconType.FaTimesCircle, "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text")
-        }
-        if (amount == '') {
-            return snackbar?.current?.show("Amount is Empty", snackBarIconType.FaTimesCircle, "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text")
-        }
-        if (!Number(amount)) {
-            snackbar?.current?.show("Invalid Amount", snackBarIconType.FaTimesCircle, "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text")
-            return setAmount('')
-        }
+      }
 
-        dispatch({ type: "addItems", payload: [{ item: item, amount: amount }], payload2: state.totalBill + Number(amount) })
-        setItem('')
-        setAmount('')
+      addBillToStore({
+        billId: billObj.bill.key,
+        billName: billName,
+        billAmount: itemBill,
+        usersWithBillAdded: users,
+      });
+      setItemBill(0);
+      resetDrawees();
+      resetPayees();
+      updateBillName("");
+    },
+    onError: (err: any) => {
+      console.log(err);
+      return showSnackBar(snackbar, "API Error", "error");
+    },
+  });
+
+  useEffect(() => {
+    const node = nodeRef.current;
+    const controls = animate(previousItemBill.current, itemBill, {
+      duration: 0.5,
+      onUpdate(value) {
+        if (node) {
+          node.textContent = value.toFixed(0);
+        }
+      },
+    });
+    previousItemBill.current = itemBill;
+    return () => controls.stop();
+  }, [itemBill]);
+
+  const addContributions = () => {
+    if (selectedPayee == "") {
+      return showSnackBar(snackbar, "Payee not Selected", "error");
+    }
+    if (!payees[selectedPayee]) {
+      return showSnackBar(snackbar, "Contribution not added", "error");
+    }
+    if (!Number(payees[selectedPayee])) {
+      showSnackBar(snackbar, "Invalid Amount", "error");
+      return resetPayeeContribution();
     }
 
-    const handleKeyPress = (e: { key: string; }) => {
-        if (e.key === "Enter") {
-            addItems()
-        }
+    const previousPayeeContribution: number = previousPayeeState["current"][
+      selectedPayee
+    ]
+      ? Number(previousPayeeState["current"][selectedPayee])
+      : 0;
+    setItemBill(
+      (prev) => prev + Number(payees[selectedPayee]) - previousPayeeContribution
+    );
+    previousPayeeState.current = payees;
+  };
+
+  const addBill = () => {
+    if (Object.keys(drawees).length <= 0) {
+      return showSnackBar(snackbar, "Select atleast 1 Drawee", "error");
+    }
+    if (billName === "") {
+      return showSnackBar(snackbar, "Bill name is empty", "error");
+    }
+    if (itemBill === 0) {
+      return showSnackBar(snackbar, "Add atleast 1 Contribution", "error");
     }
 
-    return (
-        <div className="relative bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-xl shadow-custom p-5 lg:p-7 md:p-7">
-            <p className="text-2xl font-bold">Enter Item</p>
-            <Dropdown state={state} dispatch={dispatch} />
-            <div className="flex flex-row p-2 justify-start items-center bg-secondary rounded-lg">
-                <FaShoppingBag size={25} className="m-2" />
-                <input
-                    onKeyDown={handleKeyPress}
-                    className="font-bold w-full rounded-lg p-3 text-stroke bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
-                    placeholder="Enter Item" name="item" value={item} onChange={(e) => setItem(e.target.value)} />
+    mutate({
+      event_key: eventKey,
+      name: billName,
+      amount: itemBill,
+      drawees: formatDrawees(drawees),
+      payees: formatPayees(payees),
+      notes: "",
+    });
+  };
+
+  const handleContributionKeyPress = (e: { key: string }) => {
+    if (e.key === "Enter") {
+      addContributions();
+    }
+  };
+
+  const handleBillKeyPress = (e: { key: string }) => {
+    if (e.key === "Enter") {
+      addBill();
+    }
+  };
+
+  return (
+    <div className="relative bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 lg:p-7 md:p-7 md:rounded-xl">
+      <DropdownSelector />
+      <div className="flex flex-row p-1 justify-start items-center bg-secondary rounded-lg">
+        <FaShoppingBag size={23} className="m-2" />
+        <input
+          onKeyDown={handleBillKeyPress}
+          className="font-bold w-full rounded-lg p-3 text-stroke bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
+          placeholder="Enter Bill Name"
+          name="billName"
+          value={billName}
+          onChange={(e) => updateBillName(e.target.value)}
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Dropdown />
+        <div className="grid grid-cols-4">
+          <input
+            onKeyDown={handleContributionKeyPress}
+            className="col-span-3 font-bold px-3 py-4 text-stroke rounded-lg rounded-r-none bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
+            placeholder="Contribution"
+            name="contribution"
+            value={payees[selectedPayee] || ""}
+            onChange={(e) => {
+              if (selectedPayee) {
+                return setPayeeContribution(e.target.value as string);
+              } else {
+                return showSnackBar(snackbar, "Select Payee First", "error");
+              }
+            }}
+          />
+          <div
+            onClick={addContributions}
+            className="flex bg-stroke text-secondary items-center justify-center rounded-r-lg cursor-pointer"
+          >
+            <div className="hidden md:block">
+              <FaPlus />
             </div>
-            <div className="flex flex-row p-2 justify-start items-center bg-secondary rounded-lg">
-                <FaRupeeSign size={25} className="m-2" />
-                <input
-                    onKeyDown={handleKeyPress}
-                    className="font-bold w-full rounded-lg p-3 text-stroke bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
-                    placeholder="Enter Amount" name="amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-            </div>
-            <motion.button whileTap={{ scale: 0.9 }} onClick={addItems} className="text-xl font-bold bg-secondary text-stroke rounded-lg py-3">
-                Add Item
-            </motion.button>
+            <div className="block md:hidden">Add</div>
+          </div>
         </div>
-    )
+      </div>
+      <div className="flex justify-between bg-secondary rounded-lg items-center py-3 px-5 font-bold">
+        <p>Item Bill</p>
+        <p className="text-3xl font-bold">
+          <span className="text-lg font-bold pr-2">₹</span>
+          <span ref={nodeRef}>{itemBill}</span>
+        </p>
+      </div>
+      <motion.div
+        whileTap={{ scale: 0.9 }}
+        className=" flex items-center justify-center text-xl font-bold bg-secondary text-stroke rounded-lg"
+      >
+        <AnimatePresence initial={false}>
+          {isLoading ? (
+            <Loader classname="py-3" color="#073042" />
+          ) : (
+            <motion.button
+              onClick={addBill}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-full h-full py-3 cursor-pointer"
+            >
+              Add Bill
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
 }
-
