@@ -141,8 +141,8 @@ export const sendBillToBackend = async (billObj: {
 };
 
 export const sendUserToBackend = async (userObj: {
-  eventKey: string;
-  userName: string[];
+  event_key: string;
+  user_names: string[];
 }) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/add_new_user`,
