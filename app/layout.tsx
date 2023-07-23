@@ -5,8 +5,8 @@ import { OfflineHeader } from "@/components";
 const poppins = Poppins({ weight: ["600", "700", "900"], subsets: ["latin"] });
 
 export const metadata = {
-  title: "Bill Splitter",
-  description: "yes daddy ahh",
+  title: "Billicious",
+  description: "yes daddy ahh, Rawnit madarchod",
 };
 
 export default function RootLayout({

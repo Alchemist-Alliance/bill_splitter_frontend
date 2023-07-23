@@ -10,7 +10,7 @@ const Loader = ({ classname, color }: { classname: string; color: string }) => {
     >
       <svg
         width="27.5"
-        height="27.5"
+        height="auto"
         viewBox="0 0 12 12"
         fill="none"
         stroke={color}

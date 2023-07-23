@@ -16,6 +16,7 @@ import OfflineBottomColumn from "./offlineSplit/OfflineBottomColumn";
 import OfflineHeader from "./offlineSplit/OfflineHeader";
 import Loader from "./Loader";
 import Logo from "./Logo";
+import { Mascot } from "./Mascot";
 
 export {
   Header,
@@ -37,4 +38,5 @@ export {
   Loader,
   Logo,
   CreateEventForm,
+  Mascot,
 };

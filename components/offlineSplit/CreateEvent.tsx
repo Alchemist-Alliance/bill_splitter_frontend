@@ -12,6 +12,7 @@ import Loader from "../Loader";
 import { itemVariants, listVariants } from "@/data";
 import Link from "next/link";
 import { titleCase } from "@/utils";
+import { Mascot } from "../Mascot";
 
 const CreateEventForm = () => {
   const snackbarRef = useRef<any>(null);
@@ -164,7 +165,10 @@ const CreateEventForm = () => {
     <div className="flex items-center justify-center px-3">
       <SnackBar ref={snackbarRef} />
       <div className="bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 md:rounded-xl lg:p-7 md:p-7 lg:w-[450px]">
-        <p className="text-2xl font-bold mb-5">Create Event</p>
+        <div className="flex">
+          <Mascot />
+          <p className="text-2xl font-bold mb-5 ml-2">Create Event</p>
+        </div>
         <motion.div className="relative flex flex-col items-center rounded-lg">
           <motion.button
             whileTap={{ scale: 0.9 }}
