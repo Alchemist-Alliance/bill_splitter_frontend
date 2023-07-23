@@ -31,7 +31,9 @@ const OfflineFirstColumn = () => {
   }, [totalBill]);
 
   useEffect(() => {
-    userRef.current!.textContent = String(users.length - 6);
+    if (users.length > 6) {
+      userRef.current!.textContent = String(users.length - 6);
+    }
   }, []);
   const split = () => {};
 

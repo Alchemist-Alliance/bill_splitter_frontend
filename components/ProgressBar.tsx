@@ -59,7 +59,7 @@ const ProgressBar = ({
       />
       <div className="flex flex-col ml-4 flex-grow">
         <div className="flex flex-row justify-between mb-1">
-          <p className="font-bold text-lg">
+          <p className="font-bold text-md">
             {name}
             <span className="ml-1">(</span>
             <span
@@ -70,7 +70,7 @@ const ProgressBar = ({
             </span>
             <span>)</span>
           </p>
-          <p className="font-bold text-lg">
+          <p className="font-bold text-md">
             ₹<span ref={moneySpendRef}>{money}</span>
           </p>
         </div>
