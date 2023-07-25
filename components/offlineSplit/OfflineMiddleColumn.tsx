@@ -2,20 +2,16 @@
 
 import { Dropdown, Loader } from "@/components";
 import { FaPlus, FaRupeeSign, FaShoppingBag } from "react-icons/fa";
-import { payeeType } from "@/types";
+import { Users, payeeType } from "@/types";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { AnimatePresence, animate, motion } from "framer-motion";
 import DropdownSelector from "./DropdownSelector";
-import {
-  formatDrawees,
-  formatPayees,
-  sendBillToBackend,
-  showSnackBar,
-} from "@/utils";
+import { formatDrawees, sendBillToBackend, showSnackBar } from "@/utils";
 import { useDrawee, useBillInput, usePayee } from "@/store";
 import { shallow } from "zustand/shallow";
 import useAppContext from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 
 export default function OfflineMiddleColumn({
   snackbar,
@@ -56,20 +52,24 @@ export default function OfflineMiddleColumn({
   const { isLoading, mutate } = useMutation({
     mutationFn: sendBillToBackend,
     onSuccess: (billObj: any) => {
-      for (let i of Object.keys(drawees)) {
-        users[Number(i)].bills[billObj.bill.key] = 0;
-      }
-      for (let i of Object.keys(payees)) {
-        if (payees[i] !== "") {
-          users[Number(i)].bills[billObj.bill.key] = Number(payees[i]);
+      const usersCopy: Users[] = JSON.parse(JSON.stringify(users));
+      const newUsers = usersCopy.map((user, index) => {
+        user.expenses = billObj.expenses[index];
+        if (Object.keys(drawees).includes(user.key)) {
+          user.bills[billObj.bill_key] = 0;
         }
-      }
+        if (Object.keys(payees).includes(user.key)) {
+          user.bills[billObj.bill_key] = Number(payees[user.key]);
+        }
+        return user;
+      });
 
       addBillToStore({
-        billId: billObj.bill.key,
+        billId: billObj.bill_key,
         billName: billName,
         billAmount: itemBill,
-        usersWithBillAdded: users,
+        usersWithBillAdded: newUsers,
+        sharedAmount: billObj.shared_amount,
       });
       setItemBill(0);
       resetDrawees();
@@ -133,9 +133,9 @@ export default function OfflineMiddleColumn({
     mutate({
       event_key: eventKey,
       name: billName,
-      amount: itemBill,
+      amount: itemBill.toFixed(1),
       drawees: formatDrawees(drawees),
-      payees: formatPayees(payees),
+      payees: payees,
       notes: "",
     });
   };
@@ -170,6 +170,9 @@ export default function OfflineMiddleColumn({
         <Dropdown />
         <div className="grid grid-cols-4">
           <input
+            type="text"
+            pattern="\d*"
+            inputMode="numeric"
             onKeyDown={handleContributionKeyPress}
             className="col-span-3 font-bold px-3 py-4 text-stroke rounded-lg rounded-r-none bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
             placeholder="Contribution"
@@ -195,7 +198,15 @@ export default function OfflineMiddleColumn({
         </div>
       </div>
       <div className="flex justify-between bg-secondary rounded-lg items-center py-3 px-5 font-bold">
-        <p>Item Bill</p>
+        <div className="flex items-center">
+          <Image
+            src="/mascotCash.svg"
+            alt="mascotCash"
+            width={40}
+            height={40}
+          />
+          <p className="ml-2 text-lg">Item Bill</p>
+        </div>
         <p className="text-3xl font-bold">
           <span className="text-lg font-bold pr-2">₹</span>
           <span ref={nodeRef}>{itemBill}</span>

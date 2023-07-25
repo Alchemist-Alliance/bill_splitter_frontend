@@ -61,14 +61,15 @@ const ProgressBar = ({
         <div className="flex flex-row justify-between mb-1">
           <p className="font-bold text-md">
             {name}
-            <span className="ml-1">(</span>
-            <span
-              ref={expensesRef}
-              className={expenses >= 0 ? "text-[#1CE783e0]" : "text-red "}
-            >
-              {expenses}
-            </span>
-            <span>)</span>
+            {expenses !== 0 ? (
+              <span
+                className={expenses >= 0 ? "text-[#1CE783e0]" : "text-red "}
+              >
+                <span className="ml-1">(</span>
+                <span ref={expensesRef}>{expenses}</span>
+                <span>)</span>
+              </span>
+            ) : null}
           </p>
           <p className="font-bold text-md">
             ₹<span ref={moneySpendRef}>{money}</span>

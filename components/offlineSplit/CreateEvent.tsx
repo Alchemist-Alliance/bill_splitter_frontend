@@ -2,17 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FaChevronDown, FaTimes, FaTimesCircle } from "react-icons/fa";
-import { SiYourtraveldottv } from "react-icons/si";
 import SnackBar from "./SnackBar";
 import { useRouter } from "next/navigation";
 import { snackBarIconType } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { BsPersonFill } from "react-icons/bs";
 import Loader from "../Loader";
 import { itemVariants, listVariants } from "@/data";
 import Link from "next/link";
+import Image from "next/image";
 import { titleCase } from "@/utils";
-import { Mascot } from "../Mascot";
 
 const CreateEventForm = () => {
   const snackbarRef = useRef<any>(null);
@@ -164,10 +162,10 @@ const CreateEventForm = () => {
   return (
     <div className="flex items-center justify-center px-3">
       <SnackBar ref={snackbarRef} />
-      <div className="bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 md:rounded-xl lg:p-7 md:p-7 lg:w-[450px]">
-        <div className="flex">
-          <Mascot />
-          <p className="text-2xl font-bold mb-5 ml-2">Create Event</p>
+      <div className="bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 md:rounded-xl md:p-7 md:w-[450px]">
+        <div className="flex items-center">
+          <Image src={"/mascot.svg"} alt={"mascot"} width={50} height={50} />
+          <p className="text-center text-2xl font-bold ml-2">Create Event</p>
         </div>
         <motion.div className="relative flex flex-col items-center rounded-lg">
           <motion.button
@@ -227,7 +225,14 @@ const CreateEventForm = () => {
           </AnimatePresence>
         </motion.div>
         <div className="flex flex-row items-center bg-secondary rounded-lg">
-          <SiYourtraveldottv size={30} className="ml-4" />
+          <Image
+            src="/mascotAlt.svg"
+            alt="mascot"
+            width={30}
+            height={30}
+            className="ml-4"
+          />
+
           <input
             className="font-bold w-full rounded-lg p-4 caret-stroke text-stroke bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
             placeholder="Event Name"
@@ -238,7 +243,13 @@ const CreateEventForm = () => {
         <div className="flex flex-col">
           <div className="flex flex-row items-stretch bg-secondary rounded-lg">
             <div className="flex items-center">
-              <BsPersonFill size={30} className="ml-4" />
+              <Image
+                src="/mascotUser.svg"
+                alt="mascot"
+                width={30}
+                height={30}
+                className="ml-4"
+              />
               <input
                 className="font-bold w-full p-4 rounded-lg caret-stroke text-stroke bg-secondary cursor-text placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
                 placeholder="Users Name"
@@ -248,7 +259,7 @@ const CreateEventForm = () => {
               />
             </div>
             <button
-              className="font-bold bg-stroke text-secondary rounded-r-lg lg:px-8 md:px-8 px-5 cursor-pointer"
+              className="flex-grow font-bold bg-stroke text-secondary rounded-r-lg lg:px-8 md:px-8 px-5 cursor-pointer"
               onClick={addUsers}
             >
               Add

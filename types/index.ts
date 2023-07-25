@@ -115,4 +115,5 @@ export type billState = {
   billName: string;
   billAmount: number;
   usersWithBillAdded: Users[];
+  sharedAmount: number;
 };

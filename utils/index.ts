@@ -122,9 +122,9 @@ export const totalBillPaid = (totalBills: {
 export const sendBillToBackend = async (billObj: {
   event_key: string;
   name: string;
-  amount: number;
+  amount: string;
   drawees: number[];
-  payees: { [key: string]: number };
+  payees: { [key: string]: string };
   notes: string;
 }) => {
   const response = await fetch(

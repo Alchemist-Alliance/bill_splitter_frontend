@@ -5,11 +5,10 @@ import { useUserInput } from "@/store";
 import { sendUserToBackend, showSnackBar, titleCase } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { MutableRefObject } from "react";
-import { BsPersonFill } from "react-icons/bs";
 import { FaTimes } from "react-icons/fa";
 import { shallow } from "zustand/shallow";
 import { useMutation } from "@tanstack/react-query";
-import Loader from "../Loader";
+import Image from "next/image";
 
 const OfflineBottomColumn = ({
   snackbar,
@@ -81,7 +80,13 @@ const OfflineBottomColumn = ({
       <div className="flex flex-col gap-y-4 items-start lg:flex-row lg:gap-x-4 lg:items-center">
         <p className="text-2xl font-bold">Edit Users</p>
         <div className="grid grid-cols-7 pl-2 justify-start items-stretch bg-secondary rounded-lg">
-          <BsPersonFill size={30} className="ml-2 my-auto" />
+          <Image
+            src="/mascotUser.svg"
+            alt="mascot"
+            width={30}
+            height={30}
+            className="ml-2 my-auto"
+          />
           <input
             className="col-span-4 font-bold w-full p-3 my-1 rounded-lg caret-stroke text-stroke bg-secondary cursor-text placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
             placeholder="Enter Name"

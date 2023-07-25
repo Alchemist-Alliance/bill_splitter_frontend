@@ -38,7 +38,7 @@ export const createAppStore = (initProps: event) => {
           state.bills[bill.billId] = {
             amount: bill.billAmount,
             name: bill.billName,
-            shared_amount: Number((bill.billAmount / 2).toFixed(1)),
+            shared_amount: bill.sharedAmount,
           };
         })
       ),
