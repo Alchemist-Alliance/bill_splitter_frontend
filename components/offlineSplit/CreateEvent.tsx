@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { FaChevronDown, FaTimes, FaTimesCircle } from "react-icons/fa";
 import SnackBar from "./SnackBar";
 import { useRouter } from "next/navigation";
-import { snackBarIconType } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import Loader from "../Loader";
 import { itemVariants, listVariants } from "@/data";

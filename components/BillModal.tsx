@@ -1,4 +1,4 @@
-import { dropIn } from "@/data";
+import { dropIn, listVariants } from "@/data";
 import useAppContext from "@/hooks";
 import {
   useBackdrop,
@@ -33,18 +33,11 @@ const BillModal = ({
     (input) => [input.billName, input.updateBillName],
     shallow
   );
-  const [showModal, closeModal, toggleModal] = useModal(
-    (modal) => [modal.openState, modal.closeModal, modal.toggleModal],
+  const [showModal, closeModal] = useModal(
+    (modal) => [modal.openState, modal.closeModal],
     shallow
   );
-  const [setCaller, closeBackdrop, toggleBackdrop] = useBackdrop(
-    (backdrop) => [
-      backdrop.setCaller,
-      backdrop.closeBackdrop,
-      backdrop.toggleBackdrop,
-    ],
-    shallow
-  );
+  const closeBackdrop = useBackdrop((backdrop) => backdrop.closeBackdrop);
   const users = useAppContext((event) => event.users);
   const [drawees, addDrawee, deleteDrawee, resetDrawees] = useDrawee(
     (drawee) => [
@@ -140,7 +133,7 @@ const BillModal = ({
           variants={dropIn}
           initial="hidden"
           animate="visible"
-          exit="exit"
+          exit="hidden"
         >
           <div className="sticky top-0 bg-stroke bg-opacity-50 backdrop-blur-sm flex flex-row items-center justify-between px-3 py-4 md:px-5 md:py-5">
             <p className="text-xl font-bold">{billName}</p>

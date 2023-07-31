@@ -1,18 +1,8 @@
 "use client";
 
 import { colors } from "@/data";
-import useAppContext from "@/hooks";
-import { AppStore, createAppStore, AppContext } from "@/store";
-import {
-  AppProviderProps,
-  ReducerAction,
-  Users,
-  draweeType,
-  event,
-  payeeType,
-  snackBarIconType,
-} from "@/types";
-import { MutableRefObject, Reducer, useRef } from "react";
+import { Users, draweeType, payeeType, snackBarIconType } from "@/types";
+import { MutableRefObject } from "react";
 
 export const randomColorPicker = () => {
   const color = colors[Math.floor(Math.random() * colors.length)];

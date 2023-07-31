@@ -104,16 +104,10 @@ export const itemVariants: Variants = {
 };
 
 export const dropIn = {
-  hidden: { opacity: 0, scale: 0 },
+  hidden: { opacity: 0, scale: 0.8, transition: { duration: 0.2 } },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: {
-      duration: 0.1,
-      type: "spring",
-      damping: 25,
-      stiffness: 500,
-    },
+    transition: { duration: 0.2 },
   },
-  exit: { opacity: 0, scale: 0 },
 };

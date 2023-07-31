@@ -105,16 +105,14 @@ const OfflineFirstColumn = () => {
             <motion.div
               className="absolute z-50"
               onAnimationComplete={() => toggleConfettiExplosion(false)}
-              initial={{ scale: 0.5, opacity: 0, y: "0" }}
+              initial={{ scale: 0.3, opacity: 0, y: "0" }}
               animate={{
                 scale: 0.5,
                 opacity: 1,
                 y: "-7rem",
                 transition: {
-                  duration: 1.5,
-                  type: "spring",
-                  damping: 50,
-                  stiffness: 500,
+                  ease: "easeOut",
+                  duration: 0.3,
                 },
               }}
               exit={{ opacity: 0 }}
@@ -129,9 +127,14 @@ const OfflineFirstColumn = () => {
           )}
         </AnimatePresence>
       </div>
-      <div className="relative flex items-center justify-center">
-        {confettiExplosion && <ConfettiExplosion {...confettiProps} />}
-      </div>
+      {/* <div className="relative flex items-center justify-center">
+        {confettiExplosion && (
+          <ConfettiExplosion
+            {...confettiProps}
+            onComplete={() => toggleConfettiExplosion(false)}
+          />
+        )}
+      </div> */}
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={split}
