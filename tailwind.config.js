@@ -31,7 +31,7 @@ module.exports = {
         primary: "#C4E9CE",
         stroke: "#073042",
         red: "#FA7A7A",
-        "stroke-gradient": "#126b45",
+        "stroke-gradient": "#01874e",
         "snackbar-error-bg": "#FED0D0",
         "snackbar-success-bg": "#F0F9EB",
         "snackbar-error-text": "#F56C6C",
@@ -45,7 +45,7 @@ module.exports = {
       },
       animation: {
         "custom-fade": "fadeIn 0.5s, fadeOut 0.5s ease-in-out 2.5s",
-        "custom-progress": "progress 0.4s ease-in-out forwards",
+        "custom-fade-2": "fadeIn2 1s, fadeOut2 0.5s ease-in-out 0.5s",
       },
       keyframes: {
         fadeIn: {
@@ -65,6 +65,26 @@ module.exports = {
           },
           to: {
             top: 0,
+            opacity: 0,
+          },
+        },
+        fadeIn2: {
+          from: {
+            bottom: 0,
+            opacity: 0.5,
+            scale: 0.5,
+          },
+          to: {
+            bottom: "10%",
+            opacity: 1,
+            scale: 1,
+          },
+        },
+        fadeOut2: {
+          from: {
+            opacity: 1,
+          },
+          to: {
             opacity: 0,
           },
         },

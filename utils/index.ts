@@ -101,7 +101,6 @@ export const initialDraweeState = (users: Users[]) => {
 
 export function titleCase(str: string) {
   return str
-    .toLowerCase()
     .split(" ")
     .map(function (word: string) {
       return word.charAt(0).toUpperCase() + word.slice(1);
@@ -165,10 +164,10 @@ export const formatDrawees = (drawees: draweeType) => {
   return formattedDrawees;
 };
 
-export const formatPayees = (payees: payeeType) => {
-  const formattedPayees: { [key: string]: number } = {};
+export const calculateContributions = (payees: payeeType) => {
+  let contributions: number = 0;
   for (let i of Object.keys(payees)) {
-    formattedPayees[i] = Number(payees[i]);
+    contributions += Number(payees[i]);
   }
-  return formattedPayees;
+  return contributions;
 };

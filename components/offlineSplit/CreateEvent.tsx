@@ -10,28 +10,33 @@ import Loader from "../Loader";
 import { itemVariants, listVariants } from "@/data";
 import Link from "next/link";
 import Image from "next/image";
-import { titleCase } from "@/utils";
+import { showSnackBar, titleCase } from "@/utils";
+import { useBackdrop, useRecentEvents } from "@/store";
+import { shallow } from "zustand/shallow";
+import BackDrop from "../BackDrop";
 
 const CreateEventForm = () => {
-  const snackbarRef = useRef<any>(null);
+  const snackbar = useRef<any>(null);
   const [names, setNames] = useState<string[]>([]);
   const userRef = useRef<HTMLInputElement>(null);
   const eventRef = useRef<HTMLInputElement>(null);
   const [eventData, setEventData] = useState<
     { eventId: string; eventName: string }[]
   >([]);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openState, toggleRecentEvents] = useRecentEvents((recentEventTab) => [
+    recentEventTab.openState,
+    recentEventTab.toggleRecentEvents,
+  ]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [setCaller, toggleBackdrop] = useBackdrop(
+    (backdrop) => [backdrop.setCaller, backdrop.toggleBackdrop],
+    shallow
+  );
   const navigate = useRouter();
 
   const addUsers = () => {
     if (userRef.current!.value === "") {
-      return snackbarRef?.current?.show(
-        "Name is Empty",
-        snackBarIconType.FaTimesCircle,
-        "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text"
-      );
+      return showSnackBar(snackbar, "Name is Empty", "error");
     }
 
     if (
@@ -39,11 +44,7 @@ const CreateEventForm = () => {
         (name) => name.toLowerCase() === userRef.current!.value.toLowerCase()
       )
     ) {
-      snackbarRef?.current?.show(
-        "Member Name already exists",
-        snackBarIconType.FaTimesCircle,
-        "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text"
-      );
+      showSnackBar(snackbar, "Member Name already exists", "error");
       return (userRef.current!.value = "");
     }
     const newNames: string[] = [...names, titleCase(userRef.current!.value)];
@@ -62,18 +63,10 @@ const CreateEventForm = () => {
 
   async function createEvent() {
     if (names.length < 2) {
-      return snackbarRef?.current?.show(
-        "Less than 2 Users",
-        snackBarIconType.FaTimesCircle,
-        "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text"
-      );
+      return showSnackBar(snackbar, "Less than 2 Users", "error");
     }
     if (eventRef.current!.value == "") {
-      return snackbarRef?.current?.show(
-        "Enter name for Event",
-        snackBarIconType.FaTimesCircle,
-        "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text"
-      );
+      return showSnackBar(snackbar, "Enter Name for Event", "error");
     }
 
     const eventBody = JSON.stringify({
@@ -122,11 +115,7 @@ const CreateEventForm = () => {
       navigate.push(path);
     } catch (err) {
       console.log(err);
-      snackbarRef?.current?.show(
-        "Error Occured in API",
-        snackBarIconType.FaTimesCircle,
-        "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text"
-      );
+      showSnackBar(snackbar, "Error in API", "error");
       return setLoading((prev) => !prev);
     }
   }
@@ -151,6 +140,12 @@ const CreateEventForm = () => {
     }
   };
 
+  const toggleRecentEventTab = () => {
+    setCaller("createEvent");
+    toggleRecentEvents();
+    toggleBackdrop();
+  };
+
   useEffect(() => {
     const event = localStorage.getItem("event");
     if (event) {
@@ -160,17 +155,18 @@ const CreateEventForm = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center px-3">
-      <SnackBar ref={snackbarRef} />
+    <div className="flex items-center justify-center px-3 mt-28 md:mt-[7.5rem]">
+      <BackDrop />
+      <SnackBar ref={snackbar} />
       <div className="bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 md:rounded-xl md:p-7 md:w-[450px]">
         <div className="flex items-center">
           <Image src={"/mascot.svg"} alt={"mascot"} width={50} height={50} />
           <p className="text-center text-2xl font-bold ml-2">Create Event</p>
         </div>
-        <motion.div className="relative flex flex-col items-center rounded-lg">
+        <motion.div className="relative flex flex-col items-center rounded-lg z-30">
           <motion.button
             whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={toggleRecentEventTab}
             className="bg-secondary p-3 w-full flex items-center justify-between font-bold rounded-lg"
           >
             {"Recent Events"}
@@ -179,20 +175,20 @@ const CreateEventForm = () => {
                 open: { rotate: 180, transition: { duration: 0.2 } },
                 closed: { rotate: 0, transition: { duration: 0.2 } },
               }}
-              animate={isOpen ? "open" : "closed"}
+              animate={openState ? "open" : "closed"}
               initial="closed"
             >
               <FaChevronDown className="h-8" />
             </motion.div>
           </motion.button>
           <AnimatePresence initial={false}>
-            {isOpen && (
+            {openState && (
               <motion.div
                 variants={listVariants}
                 animate="open"
                 initial="closed"
                 exit="closed"
-                className="bg-stroke text-secondary z-10 absolute top-20 flex flex-col items-start rounded-lg p-2 w-full no-scrollbar"
+                className="bg-stroke text-secondary z-30 absolute top-20 flex flex-col items-start rounded-lg p-2 w-full no-scrollbar"
               >
                 {eventData.length === 0 ? (
                   <motion.div
@@ -210,7 +206,11 @@ const CreateEventForm = () => {
                       data-value={index}
                       className="flex justify-between items-center w-full font-bold p-4 hover:bg-background rounded-r-lg border-l-transparent hover:border-l-secondary border-l-4"
                     >
-                      <Link className="cursor-pointer" href={data.eventId}>
+                      <Link
+                        className="cursor-pointer"
+                        href={data.eventId}
+                        onClick={toggleBackdrop}
+                      >
                         {data.eventName}
                       </Link>
                       <FaTimes
@@ -226,10 +226,10 @@ const CreateEventForm = () => {
         </motion.div>
         <div className="flex flex-row items-center bg-secondary rounded-lg">
           <Image
-            src="/mascotAlt.svg"
-            alt="mascot"
-            width={30}
-            height={30}
+            src="/nekoSurprised.svg"
+            alt="nekoSurprised"
+            width={40}
+            height={40}
             className="ml-4"
           />
 
@@ -244,10 +244,10 @@ const CreateEventForm = () => {
           <div className="flex flex-row items-stretch bg-secondary rounded-lg">
             <div className="flex items-center">
               <Image
-                src="/mascotUser.svg"
-                alt="mascot"
-                width={30}
-                height={30}
+                src="/nekoUser.svg"
+                alt="nekoUser"
+                width={40}
+                height={40}
                 className="ml-4"
               />
               <input

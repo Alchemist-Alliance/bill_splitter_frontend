@@ -3,6 +3,7 @@
 import { animate, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import Avatar from "boring-avatars";
+import { avatarColors } from "@/data";
 
 const ProgressBar = ({
   name,
@@ -41,7 +42,7 @@ const ProgressBar = ({
       duration: 0.5,
       onUpdate(value) {
         if (node) {
-          node.textContent = value.toFixed(0);
+          node.textContent = value.toFixed(2);
         }
       },
     });
@@ -51,22 +52,15 @@ const ProgressBar = ({
 
   return (
     <div className="flex flex-row flex-grow py-4">
-      <Avatar
-        size={50}
-        name={name}
-        variant="beam"
-        colors={["#45EBA5", "#21ABA5", "#1D566E", "#163A5F", "#073042"]}
-      />
+      <Avatar size={50} name={name} variant="beam" colors={avatarColors} />
       <div className="flex flex-col ml-4 flex-grow">
         <div className="flex flex-row justify-between mb-1">
           <p className="font-bold text-md">
             {name}
             {expenses !== 0 ? (
-              <span
-                className={expenses >= 0 ? "text-[#1CE783e0]" : "text-red "}
-              >
+              <span className={expenses >= 0 ? "text-[#09C184]" : "text-red "}>
                 <span className="ml-1">(</span>
-                <span ref={expensesRef}>{expenses}</span>
+                <span ref={expensesRef}>{expenses.toFixed(2)}</span>
                 <span>)</span>
               </span>
             ) : null}

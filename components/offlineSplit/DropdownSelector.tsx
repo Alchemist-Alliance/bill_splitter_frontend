@@ -1,6 +1,6 @@
 import { itemVariants, listVariants } from "@/data";
 import useAppContext from "@/hooks";
-import { useDrawee } from "@/store";
+import { useBackdrop, useDrawee, usePayee } from "@/store";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaChevronDown } from "react-icons/fa";
 import { shallow } from "zustand/shallow";
@@ -16,6 +16,16 @@ const DropdownSelector = () => {
     ],
     shallow
   );
+  const [payeeOpenState, setPayeeOpenState] = usePayee(
+    (payee) => [payee.openState, payee.setOpenState],
+    shallow
+  );
+
+  const [setCaller, toggleBackdrop] = useBackdrop(
+    (backdrop) => [backdrop.setCaller, backdrop.toggleBackdrop],
+    shallow
+  );
+
   const users = useAppContext((event) => event.users);
 
   const handleCheckBox = (e: HTMLInputElement) => {
@@ -28,18 +38,31 @@ const DropdownSelector = () => {
     }
   };
 
+  const handleDraweeDropdown = () => {
+    if (payeeOpenState) {
+      setPayeeOpenState();
+    }
+    setCaller("drawee");
+    toggleBackdrop();
+    setOpenState();
+  };
+
   return (
-    <motion.div className="relative flex flex-col items-center rounded-lg">
+    <motion.div
+      className={`relative flex flex-col items-center rounded-lg select-none ${
+        openState ? "z-[20]" : "z-[2]"
+      }`}
+    >
       <motion.button
         whileTap={{ scale: 0.9 }}
-        onClick={setOpenState}
+        onClick={handleDraweeDropdown}
         className="bg-secondary p-2 w-full flex items-center justify-between font-bold rounded-lg border-4 border-transparent "
       >
         Select Drawees
         <motion.div
           variants={{
-            open: { rotate: 180, transition: { duration: 0.2 } },
-            closed: { rotate: 0, transition: { duration: 0.2 } },
+            open: { rotate: 180, transition: { duration: 0.3 } },
+            closed: { rotate: 0, transition: { duration: 0.3 } },
           }}
           animate={openState ? "open" : "closed"}
           initial="closed"
@@ -54,7 +77,7 @@ const DropdownSelector = () => {
             animate="open"
             initial="closed"
             exit="closed"
-            className="bg-stroke text-secondary z-10 absolute top-20 flex flex-col items-start rounded-lg px-6 py-4 w-full custom-scrollbar divide-y divide-secondary max-h-[300px] overflow-y-auto"
+            className="bg-stroke text-secondary z-20 absolute top-20 flex flex-col items-start rounded-lg px-6 py-4 w-full custom-scrollbar divide-y divide-secondary max-h-[300px] overflow-y-auto"
           >
             {users.map((user, index) => (
               <motion.div

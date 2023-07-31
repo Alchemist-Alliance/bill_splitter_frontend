@@ -1,11 +1,14 @@
 import {
   AppState,
   Users,
+  backdropState,
   billInputState,
   billState,
   draweeState,
   event,
+  modalState,
   payeeState,
+  recentEventState,
   userInputState,
 } from "@/types";
 
@@ -79,7 +82,6 @@ const useDrawee = create<draweeState>((set) => ({
 const usePayee = create<payeeState>((set) => ({
   openState: false,
   payees: {},
-  contributions: "",
   selectedPayee: "",
   setSelectedPayee: (payeeIndex: string) =>
     set(() => ({ selectedPayee: payeeIndex })),
@@ -99,4 +101,33 @@ const usePayee = create<payeeState>((set) => ({
   setOpenState: () => set((state) => ({ openState: !state.openState })),
 }));
 
-export { useBillInput, useUserInput, useDrawee, usePayee };
+const useBackdrop = create<backdropState>((set) => ({
+  caller: "",
+  openState: false,
+  setCaller: (caller: "drawee" | "payee" | "modal" | "createEvent" | "") =>
+    set(() => ({ caller: caller })),
+  toggleBackdrop: () => set((state) => ({ openState: !state.openState })),
+  closeBackdrop: () => set(() => ({ openState: false })),
+}));
+
+const useModal = create<modalState>((set) => ({
+  openState: false,
+  toggleModal: () => set((state) => ({ openState: !state.openState })),
+  closeModal: () => set(() => ({ openState: false })),
+}));
+
+const useRecentEvents = create<recentEventState>((set) => ({
+  openState: false,
+  toggleRecentEvents: () => set((state) => ({ openState: !state.openState })),
+  closeRecentEvents: () => set(() => ({ openState: false })),
+}));
+
+export {
+  useBillInput,
+  useUserInput,
+  useDrawee,
+  usePayee,
+  useBackdrop,
+  useModal,
+  useRecentEvents,
+};

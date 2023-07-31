@@ -1,11 +1,14 @@
 "use client";
 
+import { avatarColors, confettiProps } from "@/data";
 import useAppContext from "@/hooks";
 import Avatar from "boring-avatars";
 import { AnimatePresence, animate, motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { shallow } from "zustand/shallow";
+import Image from "next/image";
+import ConfettiExplosion from "react-confetti-explosion";
 
 const OfflineFirstColumn = () => {
   const [totalBill, users, eventName] = useAppContext(
@@ -15,6 +18,7 @@ const OfflineFirstColumn = () => {
   const previousBill = useRef<number>(totalBill);
   const billRef = useRef<HTMLSpanElement | null>(null);
   const userRef = useRef<HTMLSpanElement | null>(null);
+  const [confettiExplosion, toggleConfettiExplosion] = useState<boolean>(false);
 
   useEffect(() => {
     const node = billRef.current;
@@ -35,12 +39,22 @@ const OfflineFirstColumn = () => {
       userRef.current!.textContent = String(users.length - 6);
     }
   }, []);
-  const split = () => {};
+  const split = () => {
+    toggleConfettiExplosion((prev) => !prev);
+  };
 
   return (
     <div className="relative flex flex-col bg-primary rounded-lg text-stroke shadow-custom p-5 lg:p-7 md:p-7 md:rounded-xl">
-      <p className="text-2xl font-bold">{eventName}</p>
-      <p className="text-lg font-bold mb-20 pt-3">Splitting with</p>
+      <div className="flex items-center text-2xl font-bold mb-3">
+        <Image
+          src={"/nekoBlushing.svg"}
+          alt={"nekoBlushing"}
+          width={45}
+          height={45}
+        />
+        <p className="ml-2">{eventName}</p>
+      </div>
+      <p className="text-lg font-bold mb-[4.5rem]">Splitting with</p>
       <div className="flex flex-row relative -top-16">
         <AnimatePresence initial={false}>
           {users.map((user, index) =>
@@ -63,13 +77,7 @@ const OfflineFirstColumn = () => {
                     size={40}
                     name={user.name}
                     variant="beam"
-                    colors={[
-                      "#45EBA5",
-                      "#21ABA5",
-                      "#1D566E",
-                      "#163A5F",
-                      "#073042",
-                    ]}
+                    colors={avatarColors}
                   />
                 ) : (
                   <div className="bg-stroke text-secondary rounded-full w-[40px] h-[40px] flex items-center justify-center">
@@ -91,12 +99,45 @@ const OfflineFirstColumn = () => {
           <span ref={billRef}>{totalBill}</span>
         </p>
       </div>
+      <div className="relative flex items-center justify-center">
+        <AnimatePresence initial={false}>
+          {confettiExplosion && (
+            <motion.div
+              className="absolute z-50"
+              onAnimationComplete={() => toggleConfettiExplosion(false)}
+              initial={{ scale: 0.5, opacity: 0, y: "0" }}
+              animate={{
+                scale: 0.5,
+                opacity: 1,
+                y: "-7rem",
+                transition: {
+                  duration: 1.5,
+                  type: "spring",
+                  damping: 50,
+                  stiffness: 500,
+                },
+              }}
+              exit={{ opacity: 0 }}
+            >
+              <Image
+                src="/nekoHype.svg"
+                alt="nekoHype"
+                width={300}
+                height={300}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <div className="relative flex items-center justify-center">
+        {confettiExplosion && <ConfettiExplosion {...confettiProps} />}
+      </div>
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={split}
-        className="text-xl font-bold bg-secondary text-stroke rounded-lg py-3 mt-4"
+        className="relative flex items-center justify-center text-xl font-bold bg-secondary text-stroke rounded-lg py-3 mt-4"
       >
-        Split
+        <span>Split</span>
       </motion.button>
     </div>
   );

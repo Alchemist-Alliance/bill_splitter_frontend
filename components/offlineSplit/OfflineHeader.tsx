@@ -4,7 +4,7 @@ import Logo from "../Logo";
 
 const OfflineHeader = () => {
   return (
-    <div className="flex flex-row items-end justify-between px-3 pb-8 pt-4 lg:p-8 lg:pt-5 md:p-8 md:pt-5">
+    <div className="fixed z-[80] top-0 w-full bg-background bg-opacity-80 bg-clip-padding blur-backdrop-filter flex flex-row items-end justify-between px-3 pt-4 pb-6 lg:p-8 lg:pt-5 md:p-8 md:pt-5">
       <div>
         <Logo />
       </div>

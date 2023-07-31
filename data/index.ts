@@ -1,4 +1,5 @@
 import { Variants } from "framer-motion";
+import { ConfettiProps } from "react-confetti-explosion";
 import { BiRupee, BiShoppingBag } from "react-icons/bi";
 
 export const items = [
@@ -20,6 +21,22 @@ export const currentExpense = [
   { money: 300, name: "Shaan" },
   { money: 0, name: "Raunit" },
 ];
+
+export const avatarColors = [
+  "#45EBA5",
+  "#21ABA5",
+  "#1D566E",
+  "#163A5F",
+  "#073042",
+];
+
+export const confettiProps: ConfettiProps = {
+  force: 0.5,
+  duration: 1500,
+  particleCount: 100,
+  width: 800,
+  colors: avatarColors,
+};
 
 export const colors = [
   { background: { r: 239, g: 92, b: 92 }, text: { r: 255, g: 244, b: 247 } },
@@ -84,4 +101,19 @@ export const itemVariants: Variants = {
     },
   },
   closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
+};
+
+export const dropIn = {
+  hidden: { opacity: 0, scale: 0 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.1,
+      type: "spring",
+      damping: 25,
+      stiffness: 500,
+    },
+  },
+  exit: { opacity: 0, scale: 0 },
 };

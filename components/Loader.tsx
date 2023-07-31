@@ -1,7 +1,13 @@
 "use client";
 import { motion } from "framer-motion";
 
-const Loader = ({ classname, color }: { classname: string; color: string }) => {
+const Loader = ({
+  classname,
+  color,
+}: {
+  classname?: string;
+  color: string;
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.7 }}

@@ -17,8 +17,8 @@ const OfflineLastColumn = () => {
     <div className="lg:row-span-2 flex flex-col shadow-custom bg-primary text-stroke rounded-lg overflow-y-auto overflow-x-hidden no-scrollbar p-5 md:rounded-xl lg:p-7 md:p-7 lg:max-h-[672px] md:max-h-[550px]">
       <div className="flex items-center text-2xl font-bold mb-5">
         <Image
-          src={"/mascotCashWhite.svg"}
-          alt={"mascot"}
+          src={"/nekoCashLight.svg"}
+          alt={"nekoCash"}
           width={50}
           height={50}
         />

@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`flex flex-col min-w-screen h-screen bg-background ${poppins.className}`}
+        className={`custom-scrollbar bg-background ${poppins.className}`}
         suppressHydrationWarning={true}
       >
         <OfflineHeader />

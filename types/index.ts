@@ -101,7 +101,6 @@ export type payeeType = {
 export type payeeState = {
   openState: boolean;
   payees: payeeType;
-  contributions: string;
   selectedPayee: string;
   setSelectedPayee: (payeeIndex: string) => void;
   setPayeeContribution: (payeeContribution: string) => void;
@@ -116,4 +115,26 @@ export type billState = {
   billAmount: number;
   usersWithBillAdded: Users[];
   sharedAmount: number;
+};
+
+export type backdropState = {
+  caller: "drawee" | "payee" | "modal" | "createEvent" | "";
+  openState: boolean;
+  setCaller: (
+    caller: "drawee" | "payee" | "modal" | "createEvent" | ""
+  ) => void;
+  toggleBackdrop: () => void;
+  closeBackdrop: () => void;
+};
+
+export type modalState = {
+  openState: boolean;
+  toggleModal: () => void;
+  closeModal: () => void;
+};
+
+export type recentEventState = {
+  openState: boolean;
+  toggleRecentEvents: () => void;
+  closeRecentEvents: () => void;
 };

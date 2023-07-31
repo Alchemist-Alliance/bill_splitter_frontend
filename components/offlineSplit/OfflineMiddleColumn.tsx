@@ -1,17 +1,22 @@
 "use client";
 
-import { Dropdown, Loader } from "@/components";
+import { Dropdown } from "@/components";
 import { FaPlus, FaRupeeSign, FaShoppingBag } from "react-icons/fa";
-import { Users, payeeType } from "@/types";
+import { payeeType } from "@/types";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { AnimatePresence, animate, motion } from "framer-motion";
+import { animate, motion } from "framer-motion";
 import DropdownSelector from "./DropdownSelector";
-import { formatDrawees, sendBillToBackend, showSnackBar } from "@/utils";
-import { useDrawee, useBillInput, usePayee } from "@/store";
+import { calculateContributions, showSnackBar } from "@/utils";
+import {
+  useDrawee,
+  useBillInput,
+  usePayee,
+  useModal,
+  useBackdrop,
+} from "@/store";
 import { shallow } from "zustand/shallow";
-import useAppContext from "@/hooks";
-import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
+import BillModal from "../BillModal";
 
 export default function OfflineMiddleColumn({
   snackbar,
@@ -19,68 +24,31 @@ export default function OfflineMiddleColumn({
   snackbar: MutableRefObject<any>;
 }) {
   const nodeRef = useRef<HTMLSpanElement | null>(null);
-  const users = useAppContext((event) => event.users);
-  const addBillToStore = useAppContext((event) => event.addBill);
-  const eventKey = useAppContext((event) => event.key);
-  const [drawees, resetDrawees] = useDrawee(
-    (draweeState) => [draweeState.drawees, draweeState.resetDrawees],
-    shallow
-  );
+
+  const drawees = useDrawee((draweeState) => draweeState.drawees);
   const [billName, updateBillName] = useBillInput(
     (input) => [input.billName, input.updateBillName],
     shallow
   );
+
   const [itemBill, setItemBill] = useState<number>(0);
-  const [
-    payees,
-    selectedPayee,
-    setPayeeContribution,
-    resetPayeeContribution,
-    resetPayees,
-  ] = usePayee(
-    (payeeState) => [
-      payeeState.payees,
-      payeeState.selectedPayee,
-      payeeState.setPayeeContribution,
-      payeeState.resetPayeeContribution,
-      payeeState.resetPayees,
-    ],
-    shallow
-  );
+  const toggleModal = useModal((modal) => modal.toggleModal);
+  const [setCaller, toggleBackdrop] = useBackdrop((backdrop) => [
+    backdrop.setCaller,
+    backdrop.toggleBackdrop,
+  ]);
+  const [payees, selectedPayee, setPayeeContribution, resetPayeeContribution] =
+    usePayee(
+      (payeeState) => [
+        payeeState.payees,
+        payeeState.selectedPayee,
+        payeeState.setPayeeContribution,
+        payeeState.resetPayeeContribution,
+      ],
+      shallow
+    );
   const previousItemBill = useRef<number>(itemBill);
   const previousPayeeState = useRef<payeeType>({});
-  const { isLoading, mutate } = useMutation({
-    mutationFn: sendBillToBackend,
-    onSuccess: (billObj: any) => {
-      const usersCopy: Users[] = JSON.parse(JSON.stringify(users));
-      const newUsers = usersCopy.map((user, index) => {
-        user.expenses = billObj.expenses[index];
-        if (Object.keys(drawees).includes(user.key)) {
-          user.bills[billObj.bill_key] = 0;
-        }
-        if (Object.keys(payees).includes(user.key)) {
-          user.bills[billObj.bill_key] = Number(payees[user.key]);
-        }
-        return user;
-      });
-
-      addBillToStore({
-        billId: billObj.bill_key,
-        billName: billName,
-        billAmount: itemBill,
-        usersWithBillAdded: newUsers,
-        sharedAmount: billObj.shared_amount,
-      });
-      setItemBill(0);
-      resetDrawees();
-      resetPayees();
-      updateBillName("");
-    },
-    onError: (err: any) => {
-      console.log(err);
-      return showSnackBar(snackbar, "API Error", "error");
-    },
-  });
 
   useEffect(() => {
     const node = nodeRef.current;
@@ -119,7 +87,7 @@ export default function OfflineMiddleColumn({
     previousPayeeState.current = payees;
   };
 
-  const addBill = () => {
+  const showBillModal = () => {
     if (Object.keys(drawees).length <= 0) {
       return showSnackBar(snackbar, "Select atleast 1 Drawee", "error");
     }
@@ -129,15 +97,12 @@ export default function OfflineMiddleColumn({
     if (itemBill === 0) {
       return showSnackBar(snackbar, "Add atleast 1 Contribution", "error");
     }
-
-    mutate({
-      event_key: eventKey,
-      name: billName,
-      amount: itemBill.toFixed(1),
-      drawees: formatDrawees(drawees),
-      payees: payees,
-      notes: "",
-    });
+    if (itemBill !== calculateContributions(payees)) {
+      return showSnackBar(snackbar, "Contributions not equal to Bill", "error");
+    }
+    setCaller("modal");
+    toggleBackdrop();
+    toggleModal();
   };
 
   const handleContributionKeyPress = (e: { key: string }) => {
@@ -148,7 +113,7 @@ export default function OfflineMiddleColumn({
 
   const handleBillKeyPress = (e: { key: string }) => {
     if (e.key === "Enter") {
-      addBill();
+      showBillModal();
     }
   };
 
@@ -156,7 +121,13 @@ export default function OfflineMiddleColumn({
     <div className="relative bg-primary text-stroke text-md flex flex-col gap-y-4 rounded-lg shadow-custom p-5 lg:p-7 md:p-7 md:rounded-xl">
       <DropdownSelector />
       <div className="flex flex-row p-1 justify-start items-center bg-secondary rounded-lg">
-        <FaShoppingBag size={23} className="m-2" />
+        <Image
+          src="/nekoHypeWithoutText.svg"
+          alt="nekoHypeWithoutText"
+          width={40}
+          height={40}
+          className="ml-2"
+        />
         <input
           onKeyDown={handleBillKeyPress}
           className="font-bold w-full rounded-lg p-3 text-stroke bg-secondary placeholder:text-stroke placeholder:opacity-40 focus:outline-none"
@@ -197,14 +168,9 @@ export default function OfflineMiddleColumn({
           </div>
         </div>
       </div>
-      <div className="flex justify-between bg-secondary rounded-lg items-center py-3 px-5 font-bold">
+      <div className="flex justify-between bg-secondary rounded-lg items-center py-[0.6rem] px-4 font-bold">
         <div className="flex items-center">
-          <Image
-            src="/mascotCash.svg"
-            alt="mascotCash"
-            width={40}
-            height={40}
-          />
+          <Image src="/nekoTasty.svg" alt="nekoTasty" width={40} height={40} />
           <p className="ml-2 text-lg">Item Bill</p>
         </div>
         <p className="text-3xl font-bold">
@@ -212,25 +178,21 @@ export default function OfflineMiddleColumn({
           <span ref={nodeRef}>{itemBill}</span>
         </p>
       </div>
-      <motion.div
-        whileTap={{ scale: 0.9 }}
-        className=" flex items-center justify-center text-xl font-bold bg-secondary text-stroke rounded-lg"
-      >
-        <AnimatePresence initial={false}>
-          {isLoading ? (
-            <Loader classname="py-3" color="#073042" />
-          ) : (
-            <motion.button
-              onClick={addBill}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-full h-full py-3 cursor-pointer"
-            >
-              Add Bill
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      <div className="relative">
+        <motion.button
+          onClick={showBillModal}
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center justify-center text-xl font-bold bg-secondary text-stroke rounded-lg w-full h-full py-3 cursor-pointer"
+        >
+          Add Bill
+        </motion.button>
+        <BillModal
+          itemBill={itemBill}
+          snackbar={snackbar}
+          previousPayeeState={previousPayeeState}
+          setItemBill={setItemBill}
+        />
+      </div>
     </div>
   );
 }

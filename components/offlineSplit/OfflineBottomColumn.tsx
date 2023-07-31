@@ -78,13 +78,21 @@ const OfflineBottomColumn = ({
   return (
     <div className="lg:col-span-2 bg-primary shadow-custom text-stroke text-md flex flex-col gap-y-6 rounded-lg p-5 overflow-y-auto no-scrollbar md:rounded-xl lg:max-h-[250px] lg:p-7 md:p-7 md:max-h-[550px]">
       <div className="flex flex-col gap-y-4 items-start lg:flex-row lg:gap-x-4 lg:items-center">
-        <p className="text-2xl font-bold">Edit Users</p>
+        <div className="flex items-center text-2xl font-bold">
+          <Image
+            src="/nekoMistake.svg"
+            alt="nekoMistake"
+            width={45}
+            height={45}
+          />
+          <p className="ml-2">Edit Users</p>
+        </div>
         <div className="grid grid-cols-7 pl-2 justify-start items-stretch bg-secondary rounded-lg">
           <Image
-            src="/mascotUser.svg"
-            alt="mascot"
-            width={30}
-            height={30}
+            src="/nekoUser.svg"
+            alt="nekoUser"
+            width={40}
+            height={40}
             className="ml-2 my-auto"
           />
           <input

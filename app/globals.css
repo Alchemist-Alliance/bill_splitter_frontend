@@ -16,6 +16,15 @@
   box-sizing: border-box;
 }
 
+input,
+textarea,
+button,
+select,
+div,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -63,5 +72,18 @@ input:-webkit-autofill:active {
   .custom-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: 5px;
+  }
+}
+
+@layer utilities {
+  .blur-backdrop-filter {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+@layer utilities {
+  html {
+    -webkit-tap-highlight-color: transparent;
   }
 }
