@@ -11,7 +11,11 @@ const SnackBar = forwardRef(({}, ref) => {
   const [snackBar, setSnackBar] = useState<snackBarState>({
     message: "",
     iconType: FaTimesCircle,
-    classname: "",
+    style: {
+      backgroundColor: "#FED0D0",
+      color: "#F56C6C",
+      borderColor: "#F56C6C",
+    },
   });
 
   const dropIn = {
@@ -32,12 +36,20 @@ const SnackBar = forwardRef(({}, ref) => {
   useImperativeHandle(
     ref,
     () => ({
-      show(snackMessage: string, iconType: IconType, className: string) {
+      show(
+        snackMessage: string,
+        iconType: IconType,
+        style: {
+          backgroundColor: string;
+          color: string;
+          borderColor: string;
+        }
+      ) {
         setShowSnackbar(true);
         setSnackBar({
           message: snackMessage,
           iconType: iconType,
-          classname: className,
+          style: style,
         });
         setTimeout(() => {
           setShowSnackbar(false);
@@ -52,9 +64,10 @@ const SnackBar = forwardRef(({}, ref) => {
       variants={dropIn}
       initial="hidden"
       animate={showSnackbar ? "visible" : "hidden"}
-      className={`${snackBar.classname} z-[100] fixed left-[50%] top-[10%] -translate-x-1/2 -translate-y-1/2 h-[50px] w-[250px] lg:w-auto md:w-auto flex flex-row justify-center items-center px-5 py-3 rounded-lg rounded-l-none`}
+      style={snackBar.style}
+      className="border-l-4 z-[100] fixed left-[50%] top-[10%] -translate-x-1/2 -translate-y-1/2 flex flex-row justify-center items-center px-5 py-3 rounded-lg rounded-l-none"
     >
-      <snackBar.iconType className="cursor-pointer" />
+      <snackBar.iconType className="cursor-pointer" size={20} />
       <div className="ml-3 font-semibold flex">{snackBar.message}</div>
     </motion.div>
   );

@@ -71,7 +71,7 @@ export default function OfflineMiddleColumn({
     if (!payees[selectedPayee]) {
       return showSnackBar(snackbar, "Contribution not added", "error");
     }
-    if (!Number(payees[selectedPayee])) {
+    if (!Number(payees[selectedPayee]) && payees[selectedPayee] !== "0") {
       showSnackBar(snackbar, "Invalid Amount", "error");
       return resetPayeeContribution();
     }

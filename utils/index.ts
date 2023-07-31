@@ -63,10 +63,17 @@ export const showSnackBar = (
   message: string,
   type: "success" | "error"
 ) => {
-  const tailwindClasses = {
-    success: "bg-stroke text-secondary border-l-4 border-secondary",
-    error:
-      "bg-snackbar-error-bg text-snackbar-error-text border-l-4 border-snackbar-error-text",
+  const style = {
+    success: {
+      backgroundColor: "#073042",
+      color: "#6DD58C",
+      borderColor: "#6DD58C",
+    },
+    error: {
+      backgroundColor: "#FED0D0",
+      color: "#F56C6C",
+      borderColor: "#F56C6C",
+    },
   };
 
   const snackBarIcons = {
@@ -74,11 +81,7 @@ export const showSnackBar = (
     error: snackBarIconType.FaTimesCircle,
   };
 
-  return snackbar?.current?.show(
-    message,
-    snackBarIcons[type],
-    tailwindClasses[type]
-  );
+  return snackbar?.current?.show(message, snackBarIcons[type], style[type]);
 };
 
 export const initialDraweeState = (users: Users[]) => {

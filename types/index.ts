@@ -63,7 +63,11 @@ export const snackBarIconType = {
 export interface snackBarState {
   message: string;
   iconType: IconType;
-  classname: string;
+  style: {
+    backgroundColor: string;
+    color: string;
+    borderColor: string;
+  };
 }
 
 export type AppProviderProps = {
